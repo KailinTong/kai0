@@ -491,7 +491,7 @@ def get_arguments():
                         default="/camera_head/camera_head/color/image_raw",
                         help="Head/overhead camera topic (D456)")
     parser.add_argument("--img_wrist_topic", type=str,
-                        default="/camera_wrist/camera_wrist/color/image_raw",
+                        default="/camera_wrist/camera_wrist/infra1/image_rect_raw",
                         help="Wrist camera topic (D405)")
 
     # Arm topics (Piper ROS 2)
