@@ -78,11 +78,25 @@ Current setup:
 
 ```bash
 # 1. Download checkpoints (one-time, ~several GB)
+#    The HF repo uses Task_A/, Task_B/, Task_C/ (not FlattenFold/)
 cd ~/workspace/kai0
 uv run python scripts/download_checkpoints.py
 
+# If the server cannot reach Hugging Face, download on the laptop and SCP:
+#   cd /tmp
+#   python3 -c "
+#   from huggingface_hub import snapshot_download
+#   snapshot_download('OpenDriveLab-org/Kai0',
+#                     repo_type='model',
+#                     allow_patterns=['Task_A/*', 'README.md'],
+#                     local_dir='./kai0_checkpoints')
+#   "
+#   scp -r /tmp/kai0_checkpoints/Task_A tugraz-kailin@<GPU_SERVER_IP>:~/workspace/kai0/my_checkpoints/
+
 # 2. Check downloaded checkpoints
 find ./checkpoints -maxdepth 4 -type d | head -20
+# or if using my_checkpoints:
+find ./my_checkpoints -maxdepth 4 -type d | head -20
 
 # 3. Start the policy server (uses 1 GPU, ~8 GB VRAM)
 CUDA_VISIBLE_DEVICES=0 uv run scripts/serve_policy.py \
@@ -90,6 +104,7 @@ CUDA_VISIBLE_DEVICES=0 uv run scripts/serve_policy.py \
   policy:checkpoint \
   --policy.config=pi05_flatten_fold_normal \
   --policy.dir=./checkpoints/Task_A/best/90000
+# NOTE: adjust --policy.dir to match the actual path from step 2
 ```
 
 > **NOTE:** `--port` must come **before** `policy:checkpoint` (it's a top-level arg).
